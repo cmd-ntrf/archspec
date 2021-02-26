@@ -165,14 +165,13 @@ def raw_info_dictionary():
     return info
 
 
-def compatible_microarchitectures(info):
+def compatible_microarchitectures(info, architecture_family):
     """Returns an unordered list of known micro-architectures that are
     compatible with the info dictionary passed as argument.
 
     Args:
         info (dict): dictionary containing information on the host cpu
     """
-    architecture_family = platform.machine()
     # If a tester is not registered, be conservative and assume no known
     # target is compatible with the host
     tester = COMPATIBILITY_CHECKS.get(architecture_family, lambda x, y: False)
@@ -185,9 +184,10 @@ def host():
     """Detects the host micro-architecture and returns it."""
     # Retrieve a dictionary with raw information on the host's cpu
     info = raw_info_dictionary()
+    arch = platform.machine()
 
     # Get a list of possible candidates for this micro-architecture
-    candidates = compatible_microarchitectures(info)
+    candidates = compatible_microarchitectures(info, arch)
 
     # Reverse sort of the depth for the inheritance tree among only targets we
     # can use. This gets the newest target we satisfy.
