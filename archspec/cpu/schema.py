@@ -8,6 +8,8 @@ JSON file and its schema
 import json
 import os.path
 
+import urllib.request
+
 try:
     from collections.abc import MutableMapping  # novm
 except ImportError:
@@ -51,16 +53,10 @@ class LazyDictionary(MutableMapping):
 
 
 def _load_json_file(json_file):
-    json_dir = os.path.join(os.path.dirname(__file__), "..", "json", "cpu")
-    json_dir = os.path.abspath(json_dir)
-
     def _factory():
-        filename = os.path.join(json_dir, json_file)
-        with open(filename, "r") as file:
-            return json.load(file)
-
+        with urllib.request.urlopen('https://raw.githubusercontent.com/archspec/archspec-json/v0.1.2/cpu/' + json_file) as response:
+            return json.loads(response.read())
     return _factory
-
 
 #: In memory representation of the data in microarchitectures.json,
 #: loaded on first access
